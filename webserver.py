@@ -71,7 +71,6 @@ class WebserverHandler(BaseHTTPRequestHandler):
                 return
 
             if self.path.endswith("/delete"):
-                print(self.path)
                 r_id = self.path.split('/')[2]
                 target_restaurant = session.query(Restaurant).filter_by(id=r_id).one()
 
