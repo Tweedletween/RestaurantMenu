@@ -20,8 +20,13 @@
     {% endwith %}
     </div>
 
+    {% if items == []: %}
+      <p>Yout currently have no menu items</p>
+    {% endif %}
+
     <a href={{ url_for('newMenuItem', restaurant_id=restaurant.id) }}>Create New Item</a>
     <br><br>
+
 
     {% for i in items %}
     <div class="nameAndPrice">
@@ -39,6 +44,7 @@
       <br>
     </div>
     {% endfor %}
+
   </div>
 </boby>
 </html>

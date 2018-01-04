@@ -14,10 +14,60 @@ session = DBSession()
 
 
 @app.route('/')
+@app.route('/restaurants')
+def restaurants():
+    restaurants = session.query(Restaurant).all()
+    return render_template('restaurants.html', restaurants=restaurants)
+
+
+@app.route('/restaurants/JSON')
+def restauranTJSON():
+    restaurants = session.query(Restaurant).all()
+    return jsonify(Restaurants=[restaurant.serialize for restaurant in restaurants])
+
+
+@app.route('/restaurants/new', methods=['GET', 'POST'])
+def newRestaurant():
+    if request.method == 'POST':
+        newRestaurant = Restaurant(name=request.form['name'])
+        session.add(newRestaurant)
+        session.commit()
+        flash("New restaurant created!")
+        return redirect(url_for('restaurants'))
+    else:
+        return render_template('newrestaurant.html')
+
+
+@app.route('/restaurants/<int:restaurant_id>/edit', methods=['GET', 'POST'])
+def editRestaurant(restaurant_id):
+    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    if request.method == 'POST':
+        restaurant.name = request.form['name']
+        session.add(restaurant)
+        session.commit()
+        flash("Restaurant edited successfully!")
+        return redirect(url_for('restaurants'))
+    else:
+        return render_template('editrestaurant.html', restaurant=restaurant)
+
+
+@app.route('/restaurants/<int:restaurant_id>/delete', methods=['GET', 'POST'])
+def deleteRestaurant(restaurant_id):
+    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    if request.method == 'POST':
+        session.delete(restaurant)
+        session.commit()
+        flash("Restaurant deleted successfully!")
+        return redirect(url_for('restaurants'))
+    else:
+        return render_template('deleterestaurant.html', restaurant=restaurant)
+
+
 @app.route('/restaurants/<int:restaurant_id>/menu')
 def restaurantMenu(restaurant_id):
     restaurant = session.query(Restaurant).first()
-    items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id)
+    items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
+    print(items)
     return render_template('menu.html', restaurant=restaurant, items=items)
 
 
