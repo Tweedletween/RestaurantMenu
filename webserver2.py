@@ -37,7 +37,11 @@ def newMenuItem(restaurant_id):
 def editMenuItem(restaurant_id, menu_id):
     item = session.query(MenuItem).filter_by(id=menu_id).one()
     if request.method == 'POST':
+        #print("request.form['name']: {}".format(request.form['name']))
         item.name = request.form['name']
+        item.description = request.form['description']
+        item.price = request.form['price']
+        item.course = request.form['course']
         session.add(item)
         session.commit()
         flash("Menu item edited successfully!")
